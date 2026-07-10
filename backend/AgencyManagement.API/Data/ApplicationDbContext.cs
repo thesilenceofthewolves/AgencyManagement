@@ -1,4 +1,5 @@
 //ApplicationDbontext
+using AgencyManagement.API.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,4 +11,6 @@ public class ApplicationDbContext : IdentityDbContext
         : base(options)
     {
     }
+
+    public DbSet<Worker> Workers => Set<Worker>();
 }
