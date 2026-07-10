@@ -11,20 +11,23 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // Controllers
 builder.Services.AddControllers();
 
-// Swagger
+// Swagger / OpenAPI
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+// Swagger
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// HTTPS (enable later when we configure certificates)
+// app.UseHttpsRedirection();
 
+// Map Controllers
 app.MapControllers();
 
 app.Run();
