@@ -1,0 +1,9 @@
+CREATE TABLE Roles
+(
+    RoleId INT IDENTITY(1,1) NOT NULL,
+    RoleName NVARCHAR(50) NOT NULL,
+    Description NVARCHAR(255) NULL,
+    CreatedAt DATETIME2 NOT NULL DEFAULT(SYSDATETIME()),
+    CONSTRAINT PK_Roles PRIMARY KEY (RoleId),
+    CONSTRAINT UQ_Roles_RoleName UNIQUE (RoleName)
+);

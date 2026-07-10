@@ -1,0 +1,9 @@
+DROP TABLE IF EXISTS JobRoles;
+CREATE TABLE JobRoles
+(
+    JobRoleId INT IDENTITY(1,1) PRIMARY KEY,
+
+    Name NVARCHAR(100) NOT NULL UNIQUE,
+
+    Description NVARCHAR(MAX)
+);

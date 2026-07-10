@@ -1,0 +1,25 @@
+CREATE TABLE Clients
+(
+    ClientId INT IDENTITY(1,1) PRIMARY KEY,
+
+    ClientName NVARCHAR(200) NOT NULL,
+
+    Industry NVARCHAR(100) NULL,
+
+    PhoneNumber NVARCHAR(20) NULL,
+
+    Email NVARCHAR(255) NULL,
+
+    Address NVARCHAR(255) NULL,
+
+    City NVARCHAR(100) NULL,
+
+    PostCode NVARCHAR(20) NULL,
+
+    IsActive BIT NOT NULL DEFAULT(1),
+
+    CreatedDate DATETIME2 NOT NULL DEFAULT(GETDATE()),
+
+    UpdatedDate DATETIME2 NULL
+);
+GO

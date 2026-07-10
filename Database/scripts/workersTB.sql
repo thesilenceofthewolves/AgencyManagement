@@ -1,0 +1,24 @@
+DROP TABLE IF EXISTS Workers
+CREATE TABLE Workers
+(
+    WorkerId INT IDENTITY(1,1) PRIMARY KEY,
+
+    FirstName NVARCHAR(100) NOT NULL,
+    LastName NVARCHAR(100) NOT NULL,
+
+    Gender CHAR(1) NOT NULL,
+
+    DateOfBirth DATE NULL,
+
+    PhoneNumber NVARCHAR(20) NULL,
+    Email NVARCHAR(255) NULL,
+
+    Address NVARCHAR(255) NULL,
+    City NVARCHAR(100) NULL,
+    PostCode NVARCHAR(20) NULL,
+
+    IsActive BIT NOT NULL DEFAULT(1),
+
+    CreatedDate DATETIME2 NOT NULL DEFAULT(GETDATE()),
+    UpdatedDate DATETIME2 NULL
+);

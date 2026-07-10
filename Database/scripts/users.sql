@@ -1,0 +1,20 @@
+CREATE TABLE Users
+(
+    UserId INT IDENTITY(1,1) NOT NULL,
+
+    Email NVARCHAR(255) NOT NULL,
+
+    PasswordHash NVARCHAR(255) NOT NULL,
+
+    IsActive BIT NOT NULL DEFAULT(1),
+
+    LastLogin DATETIME2 NULL,
+
+    CreatedAt DATETIME2 NOT NULL DEFAULT(SYSDATETIME()),
+
+    UpdatedAt DATETIME2 NULL,
+
+    CONSTRAINT PK_Users PRIMARY KEY (UserId),
+
+    CONSTRAINT UQ_Users_Email UNIQUE (Email)
+);
