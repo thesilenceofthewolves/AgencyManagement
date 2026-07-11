@@ -16,6 +16,14 @@ DECLARE @Domains TABLE (Domain NVARCHAR(50));
 INSERT INTO @Domains VALUES
 ('test.com'),('wax.com'),('mail.com'),('example.com');
 
+DECLARE @EndReasons TABLE (Reason NVARCHAR(100));
+INSERT INTO @EndReasons VALUES
+('Resigned'),
+('Dismissed'),
+('Contract ended'),
+('Redundancy'),
+('Retired');
+
 ;WITH Numbers AS
 (
     SELECT TOP (100)
@@ -38,12 +46,24 @@ SELECT
     ln.Name AS LastName,
     LOWER(fn.Name + '.' + ln.Name + CAST(n.n AS NVARCHAR(4)) + '@' + d.Domain),
     '07' + RIGHT('000000000' + CAST(ABS(CHECKSUM(NEWID())) % 1000000000 AS VARCHAR(9)), 9),
-    GETDATE(),              -- required, NOT NULL
-    NULL,                   -- still employed
-    NULL,                   -- no reason
-    ra.Status               -- random 1–6
+    GETDATE(),  -- created today
+    CASE 
+        WHEN s.Status >= 4 
+            THEN DATEADD(
+                    DAY, 
+                    -ABS(CHECKSUM(NEWID())) % 365,  -- sometime in last year
+                    GETDATE()
+                 )
+        ELSE NULL
+    END AS EmploymentEndDate,
+    CASE 
+        WHEN s.Status >= 4 
+            THEN (SELECT TOP 1 Reason FROM @EndReasons ORDER BY NEWID())
+        ELSE NULL
+    END AS EmploymentEndReason,
+    s.Status
 FROM Numbers n
 CROSS APPLY (SELECT TOP 1 Name FROM @FirstNames ORDER BY NEWID()) fn
 CROSS APPLY (SELECT TOP 1 Name FROM @LastNames ORDER BY NEWID()) ln
 CROSS APPLY (SELECT TOP 1 Domain FROM @Domains ORDER BY NEWID()) d
-CROSS APPLY (SELECT ABS(CHECKSUM(NEWID())) % 6 + 1 AS Status) ra;
+CROSS APPLY (SELECT ABS(CHECKSUM(NEWID())) % 6 + 1 AS Status) s;
