@@ -1,4 +1,3 @@
-//WorkersController
 using AgencyManagement.API.Data;
 using AgencyManagement.API.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -24,6 +23,20 @@ public class WorkersController : ControllerBase
         return await _context.Workers.ToListAsync();
     }
 
+    // GET: api/workers/5
+    [HttpGet("{id}")]
+    public async Task<ActionResult<Worker>> GetWorker(int id)
+    {
+        var worker = await _context.Workers.FindAsync(id);
+
+        if (worker == null)
+        {
+            return NotFound();
+        }
+
+        return worker;
+    }
+
     // POST: api/workers
     [HttpPost]
     public async Task<ActionResult<Worker>> CreateWorker(Worker worker)
@@ -32,7 +45,7 @@ public class WorkersController : ControllerBase
         await _context.SaveChangesAsync();
 
         return CreatedAtAction(
-            nameof(GetWorkers),
+            nameof(GetWorker),
             new { id = worker.WorkerId },
             worker);
     }

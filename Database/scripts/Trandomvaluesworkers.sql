@@ -21,22 +21,29 @@ INSERT INTO @Domains VALUES
     SELECT TOP (100)
         ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) AS n
     FROM sys.objects
-),
-RandomData AS
-(
-    SELECT 
-        n,
-        (SELECT TOP 1 Name FROM @FirstNames ORDER BY NEWID()) AS FirstName,
-        (SELECT TOP 1 Name FROM @LastNames ORDER BY NEWID()) AS LastName,
-        (SELECT TOP 1 Domain FROM @Domains ORDER BY NEWID()) AS Domain
-    FROM Numbers
 )
-INSERT INTO Workers (FirstName, LastName, Email, PhoneNumber, IsActive, CreatedDate)
-SELECT
+INSERT INTO Workers
+(
     FirstName,
     LastName,
-    LOWER(FirstName + '.' + LastName + CAST(n AS NVARCHAR(4)) + '@' + Domain),
+    Email,
+    PhoneNumber,
+    CreatedDate,
+    EmploymentEndDate,
+    EmploymentEndReason,
+    Status
+)
+SELECT
+    fn.Name AS FirstName,
+    ln.Name AS LastName,
+    LOWER(fn.Name + '.' + ln.Name + CAST(n.n AS NVARCHAR(4)) + '@' + d.Domain),
     '07' + RIGHT('000000000' + CAST(ABS(CHECKSUM(NEWID())) % 1000000000 AS VARCHAR(9)), 9),
-    ABS(CHECKSUM(NEWID())) % 6 + 1,   -- RANDOM 1–6 PER ROW
-    GETDATE()                         -- REQUIRED because CreatedDate is NOT NULL
-FROM RandomData;
+    GETDATE(),              -- required, NOT NULL
+    NULL,                   -- still employed
+    NULL,                   -- no reason
+    ra.Status               -- random 1–6
+FROM Numbers n
+CROSS APPLY (SELECT TOP 1 Name FROM @FirstNames ORDER BY NEWID()) fn
+CROSS APPLY (SELECT TOP 1 Name FROM @LastNames ORDER BY NEWID()) ln
+CROSS APPLY (SELECT TOP 1 Domain FROM @Domains ORDER BY NEWID()) d
+CROSS APPLY (SELECT ABS(CHECKSUM(NEWID())) % 6 + 1 AS Status) ra;
