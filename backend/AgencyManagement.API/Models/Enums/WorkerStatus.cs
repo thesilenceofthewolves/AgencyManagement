@@ -7,5 +7,6 @@ public enum WorkerStatus
     Suspended = 3,
     Resigned = 4,
     Dismissed = 5,
-    Retired = 6
+    Retired = 6,
+    Deceased = 7
 }
