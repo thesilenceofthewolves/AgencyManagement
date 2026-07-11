@@ -1,4 +1,5 @@
-//worker
+using AgencyManagement.API.Models.Enums;
+
 namespace AgencyManagement.API.Models;
 
 public class Worker
@@ -13,7 +14,11 @@ public class Worker
 
     public string PhoneNumber { get; set; } = string.Empty;
 
-    public bool IsActive { get; set; } = true;
+    public WorkerStatus Status { get; set; } = WorkerStatus.Active;
 
     public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
+
+    public DateTime? EmploymentEndDate { get; set; }
+
+    public string? EmploymentEndReason { get; set; }
 }
