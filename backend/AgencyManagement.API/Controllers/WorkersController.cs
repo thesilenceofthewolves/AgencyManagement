@@ -19,14 +19,26 @@ public class WorkersController : ControllerBase
 
     // GET: api/workers
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Worker>>> GetWorkers()
+    public async Task<ActionResult<IEnumerable<WorkerDto>>> GetWorkers()
     {
-        return await _context.Workers.ToListAsync();
+        var workers = await _context.Workers
+            .Select(w => new WorkerDto
+            {
+                WorkerId = w.WorkerId,
+                FirstName = w.FirstName,
+                LastName = w.LastName,
+                Email = w.Email,
+                PhoneNumber = w.PhoneNumber,
+                Status = w.Status
+            })
+            .ToListAsync();
+
+        return workers;
     }
 
     // GET: api/workers/5
     [HttpGet("{id}")]
-    public async Task<ActionResult<Worker>> GetWorker(int id)
+    public async Task<ActionResult<WorkerDto>> GetWorker(int id)
     {
         var worker = await _context.Workers.FindAsync(id);
 
@@ -36,14 +48,14 @@ public class WorkersController : ControllerBase
         }
 
         return new WorkerDto
-{
-    WorkerId = worker.WorkerId,
-    FirstName = worker.FirstName,
-    LastName = worker.LastName,
-    Email = worker.Email,
-    PhoneNumber = worker.PhoneNumber,
-    Status = worker.Status
-};
+        {
+            WorkerId = worker.WorkerId,
+            FirstName = worker.FirstName,
+            LastName = worker.LastName,
+            Email = worker.Email,
+            PhoneNumber = worker.PhoneNumber,
+            Status = worker.Status
+        };
     }
 
     // POST: api/workers
@@ -69,26 +81,26 @@ public class WorkersController : ControllerBase
     }
 
     // PUT: api/workers/5
-[HttpPut("{id}")]
-public async Task<IActionResult> UpdateWorker(int id, UpdateWorkerDto dto)
-{
-    var worker = await _context.Workers.FindAsync(id);
-
-    if (worker == null)
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateWorker(int id, UpdateWorkerDto dto)
     {
-        return NotFound();
+        var worker = await _context.Workers.FindAsync(id);
+
+        if (worker == null)
+        {
+            return NotFound();
+        }
+
+        worker.FirstName = dto.FirstName;
+        worker.LastName = dto.LastName;
+        worker.Email = dto.Email;
+        worker.PhoneNumber = dto.PhoneNumber;
+        worker.Status = dto.Status;
+
+        await _context.SaveChangesAsync();
+
+        return NoContent();
     }
-
-    worker.FirstName = dto.FirstName;
-    worker.LastName = dto.LastName;
-    worker.Email = dto.Email;
-    worker.PhoneNumber = dto.PhoneNumber;
-    worker.Status = dto.Status;
-
-    await _context.SaveChangesAsync();
-
-    return NoContent();
-}
 
     // PUT: api/workers/5/status
     [HttpPut("{id}/status")]
