@@ -1,8 +1,8 @@
 using AgencyManagement.API.Data;
+using AgencyManagement.API.DTOs;
 using AgencyManagement.API.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using AgencyManagement.API.DTOs;
 
 namespace AgencyManagement.API.Controllers;
 
@@ -35,13 +35,30 @@ public class WorkersController : ControllerBase
             return NotFound();
         }
 
-        return worker;
+        return new WorkerDto
+{
+    WorkerId = worker.WorkerId,
+    FirstName = worker.FirstName,
+    LastName = worker.LastName,
+    Email = worker.Email,
+    PhoneNumber = worker.PhoneNumber,
+    Status = worker.Status
+};
     }
 
     // POST: api/workers
     [HttpPost]
-    public async Task<ActionResult<Worker>> CreateWorker(Worker worker)
+    public async Task<ActionResult<Worker>> CreateWorker(CreateWorkerDto dto)
     {
+        var worker = new Worker
+        {
+            FirstName = dto.FirstName,
+            LastName = dto.LastName,
+            Email = dto.Email,
+            PhoneNumber = dto.PhoneNumber,
+            Status = dto.Status
+        };
+
         _context.Workers.Add(worker);
         await _context.SaveChangesAsync();
 
@@ -52,39 +69,8 @@ public class WorkersController : ControllerBase
     }
 
     // PUT: api/workers/5
-    [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateWorker(int id, Worker updatedWorker)
-    {
-        if (id != updatedWorker.WorkerId)
-        {
-            return BadRequest();
-        }
-
-        var worker = await _context.Workers.FindAsync(id);
-
-        if (worker == null)
-        {
-            return NotFound();
-        }
-
-        worker.FirstName = updatedWorker.FirstName;
-        worker.LastName = updatedWorker.LastName;
-        worker.Email = updatedWorker.Email;
-        worker.PhoneNumber = updatedWorker.PhoneNumber;
-        worker.Status = updatedWorker.Status;
-        worker.EmploymentEndDate = updatedWorker.EmploymentEndDate;
-        worker.EmploymentEndReason = updatedWorker.EmploymentEndReason;
-
-        await _context.SaveChangesAsync();
-
-        return NoContent();
-    }
-
-// PUT: api/workers/5/status
-[HttpPut("{id}/status")]
-public async Task<IActionResult> UpdateWorkerStatus(
-    int id,
-    UpdateWorkerStatusDto dto)
+[HttpPut("{id}")]
+public async Task<IActionResult> UpdateWorker(int id, UpdateWorkerDto dto)
 {
     var worker = await _context.Workers.FindAsync(id);
 
@@ -93,13 +79,34 @@ public async Task<IActionResult> UpdateWorkerStatus(
         return NotFound();
     }
 
+    worker.FirstName = dto.FirstName;
+    worker.LastName = dto.LastName;
+    worker.Email = dto.Email;
+    worker.PhoneNumber = dto.PhoneNumber;
     worker.Status = dto.Status;
-    worker.EmploymentEndDate = dto.EmploymentEndDate;
-    worker.EmploymentEndReason = dto.EmploymentEndReason;
 
     await _context.SaveChangesAsync();
 
     return NoContent();
 }
 
+    // PUT: api/workers/5/status
+    [HttpPut("{id}/status")]
+    public async Task<IActionResult> UpdateWorkerStatus(int id, UpdateWorkerStatusDto dto)
+    {
+        var worker = await _context.Workers.FindAsync(id);
+
+        if (worker == null)
+        {
+            return NotFound();
+        }
+
+        worker.Status = dto.Status;
+        worker.EmploymentEndDate = dto.EmploymentEndDate;
+        worker.EmploymentEndReason = dto.EmploymentEndReason;
+
+        await _context.SaveChangesAsync();
+
+        return NoContent();
+    }
 }
